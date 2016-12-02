@@ -7,39 +7,34 @@
 
 @time: 15:21:34 GMT+8
 """
-import json
-
 from pykafka import KafkaClient
 
-topic = "dnshj"
+topic_name = 'dnshj'
 hosts = "10.0.0.156:9092,10.0.0.156:9093,10.0.0.156:9094,10.0.0.156:9095,10.0.0.156:9096"
 zookeeper_connect = "10.0.0.156:21810,10.0.0.156:21811,10.0.0.156:21812"
 
 kafka = KafkaClient(hosts=hosts)
 
-topic = kafka.topics[topic]
+topic = kafka.topics[topic_name]
 
 offsets = topic.latest_available_offsets()
 
 for partition, item in offsets.iteritems():
     print partition, item[0]
 
-producer = topic.get_sync_producer(delivery_reports=True)
-
 con = topic.get_balanced_consumer(
-    consumer_group=topic,
+    consumer_group=topic_name,
     auto_commit_enable=True,
     zookeeper_connect=zookeeper_connect
 )
+print "topic:  ", con.topic
+print "partitions:   ", con.partitions
 
-print con.topic
-print con.partitions
 
 while True:
-    msgs = con.consume(block=False)
-    if msgs:
+    msgs = con.consume()
+    if msgs is not None:
         print "msgs:   ", msgs.value
-        print msgs.value
 
 
 

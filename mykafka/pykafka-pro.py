@@ -7,22 +7,22 @@
 
 @time: 15:21:34 GMT+8
 """
-import time
+# import time
 from datetime import datetime
 
 from pykafka import KafkaClient
 
-topic = 'dnshj'
+topic_name = 'dnshj'
 hosts = "10.0.0.156:9092,10.0.0.156:9093,10.0.0.156:9094,10.0.0.156:9095,10.0.0.156:9096"
 
 kafka = KafkaClient(hosts=hosts)
 
-topic = kafka.topics[topic]
+topic = kafka.topics[topic_name]
 
 producer = topic.get_sync_producer(delivery_reports=True)
 
 
-for i in range(1, 9):
+for i in range(1, 5):
     now = datetime.now()
     print now
     data = '{"id": %s, "url": "http://cniil.csip.org.cn", "sitename": "国家信息无障碍公共服务平台", "firm": "ddd", "device": "设备"}' % str(i)
@@ -30,6 +30,7 @@ for i in range(1, 9):
     # time.sleep(5)
     print data
     # break
+
 # count = 0
 # while True:
 #     count += 1
